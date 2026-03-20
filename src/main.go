@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"tucil/src/octree"
 	"tucil/src/parser"
 	"tucil/src/point"
 	"tucil/src/wrapper"
@@ -21,7 +22,11 @@ func main() {
 	var arrPoints []point.Point
 	arrPoints = point.ToPoint(vertices)
 
-	arrWrapper := wrapper.WrapInBox(arrPoints)
+	var oct *octree.OctreeNode = nil
+	arrWrapper, oct := wrapper.WrapInBox(arrPoints)
+	if oct == nil {
+		fmt.Println("kosong")
+	}
 
 	point.PrintPoints(arrWrapper)
 	point.FPrintPoints(output_file, arrWrapper)
