@@ -11,9 +11,16 @@ type OctreeNode struct {
 	IsLeaf    bool
 	IsSurface bool
 
-	Children *[8]OctreeNode
+	Children [8]*OctreeNode
 }
 
-func NewOctreeNode(p *[]point.Point) {
-
+func NewOctreeNode(p point.Point, s float32) *OctreeNode {
+	return &OctreeNode{
+		X:         p.X,
+		Y:         p.Y,
+		Z:         p.Z,
+		S:         s,
+		IsLeaf:    false,
+		IsSurface: false,
+	}
 }

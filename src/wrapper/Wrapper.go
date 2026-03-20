@@ -74,5 +74,5 @@ func WrapInBox(arrPoint []point.Point) (res []point.Point, oct *octree.OctreeNod
 		point.Point{max_x, max_y, min_z},
 		point.Point{max_x, max_y, max_z})
 
-	return res, nil
+	return res, octree.NewOctreeNode(point.Point{cx, cy, cz}, sd)
 }

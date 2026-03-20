@@ -26,6 +26,8 @@ func main() {
 	arrWrapper, oct := wrapper.WrapInBox(arrPoints)
 	if oct == nil {
 		fmt.Println("kosong")
+	} else {
+		fmt.Println(oct.S)
 	}
 
 	point.PrintPoints(arrWrapper)
