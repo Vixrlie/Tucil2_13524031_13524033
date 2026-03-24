@@ -5,20 +5,19 @@ import (
 )
 
 type OctreeNode struct {
-	X, Y, Z float32 //Titik tengah kubus
+	Centre  point.Point //Titik tengah kubus
 	S       float32 //Panjang sisi kubus
 
 	IsLeaf    bool
 	IsSurface bool
 
-	Children [8]*OctreeNode
+	InFaces   []point.Face	  
+	Children  [8]*OctreeNode
 }
 
 func NewOctreeNode(p point.Point, s float32) *OctreeNode {
 	return &OctreeNode{
-		X:         p.X,
-		Y:         p.Y,
-		Z:         p.Z,
+		Centre:    point.Point{X: p.X, Y: p.Y, Z: p.Z},
 		S:         s,
 		IsLeaf:    false,
 		IsSurface: false,
