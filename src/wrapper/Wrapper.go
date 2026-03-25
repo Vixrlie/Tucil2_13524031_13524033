@@ -28,7 +28,7 @@ func WrapInBox(arrPoint []point.Point) (res []point.Point, oct *octree.OctreeNod
 		if z < min_z { min_z = z }
 	}
 
-	var sd, cx, cy, cz float32 //s: panjang, c: tengah, sd: panjang maks
+	var sd, cx, cy, cz float32 //s: panjang, c: tengah, sd: stengah panjang maks
 	// ceil biar ga gmpg error
     cx = float32(math.Ceil(float64((max_x + min_x) / 2)))
     cy = float32(math.Ceil(float64((max_y + min_y) / 2)))
@@ -44,7 +44,7 @@ func WrapInBox(arrPoint []point.Point) (res []point.Point, oct *octree.OctreeNod
         if dy > maxDist { maxDist = dy }
         if dz > maxDist { maxDist = dz }
     }
-	sd = maxDist*2
+	sd = maxDist
 
 
 	// biar kelipatan dua aj
@@ -63,14 +63,14 @@ func WrapInBox(arrPoint []point.Point) (res []point.Point, oct *octree.OctreeNod
 
 	res = []point.Point{}
 
-	res = append(res, point.Point{min_x, min_y, min_z},
-		point.Point{min_x, min_y, max_z},
-		point.Point{min_x, max_y, min_z},
-		point.Point{min_x, max_y, max_z},
-		point.Point{max_x, min_y, min_z},
-		point.Point{max_x, min_y, max_z},
-		point.Point{max_x, max_y, min_z},
-		point.Point{max_x, max_y, max_z})
+	res = append(res, point.Point{X: min_x, Y: min_y, Z: min_z},
+		point.Point{X: min_x, Y: min_y, Z: max_z},
+		point.Point{X: min_x, Y: max_y, Z: min_z},
+		point.Point{X: min_x, Y: max_y, Z: max_z},
+		point.Point{X: max_x, Y: min_y, Z: min_z},
+		point.Point{X: max_x, Y: min_y, Z: max_z},
+		point.Point{X: max_x, Y: max_y, Z: min_z},
+		point.Point{X: max_x, Y: max_y, Z: max_z})
 
-	return res, octree.NewOctreeNode(point.Point{cx, cy, cz}, sd)
+	return res, octree.NewOctreeNode(point.Point{X: cx, Y: cy, Z: cz}, sd)
 }
