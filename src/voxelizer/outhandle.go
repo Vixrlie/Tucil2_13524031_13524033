@@ -2,6 +2,7 @@ package voxelizer
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"tucil/src/octree"
 )
@@ -19,6 +20,23 @@ func GetLeaves(node *octree.OctreeNode, leaves *[]*octree.OctreeNode) {
 	for i := range 8 {
 		GetLeaves(node.Children[i], leaves)
 	}
+}
+
+func PrintDepthDetails() {
+	fmt.Println("--- Octree Depth ---")
+	fmt.Printf("n : %v\n\n", len(DepthList)-1)
+
+	fmt.Println("--- Used Nodes ---")
+	for i := range len(DepthList) {
+		fmt.Printf("Depth - %v : %v\n", i, DepthList[i])
+	}
+	fmt.Println()
+
+	fmt.Println("--- Unused Nodes ---")
+	for i := range len(DepthList) {
+		fmt.Printf("Depth - %v : %v\n", i, int(math.Pow(8, float64(i)))-DepthList[i])
+	}
+	fmt.Println()
 }
 
 func ExportToOBJ(filename string, leaves []*octree.OctreeNode) error {
@@ -47,6 +65,9 @@ func ExportToOBJ(filename string, leaves []*octree.OctreeNode) error {
 
 	fmt.Fprintf(file, "\n")
 
+	fmt.Println("--- Vertices Generated ---")
+	fmt.Printf("v : %v\n\n", len(leaves)*8)
+
 	// ini urutan rotasiny hrs pas, intiny buat facesny
 	v := 1
 	for i := 0; i < len(leaves); i++ {
@@ -59,6 +80,9 @@ func ExportToOBJ(filename string, leaves []*octree.OctreeNode) error {
 
 		v += 8
 	}
+
+	fmt.Println("--- Faces Generated ---")
+	fmt.Printf("f : %v\n\n", len(leaves)*6)
 
 	return nil
 }
