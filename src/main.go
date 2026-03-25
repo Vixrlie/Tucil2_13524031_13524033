@@ -28,11 +28,18 @@ func main() {
 	var leaves []*octree.OctreeNode
 	voxelizer.GetLeaves(rootNode, &leaves)
 
-	fmt.Printf("Generated %d solid voxels!\n", len(leaves))
+	fmt.Println("--- Voxels Generated ---")
+	fmt.Printf("vx : %v\n\n", len(leaves))
 
+	// print vertex & face
 	outputFile := "test/placeholder.obj"
 	errr := voxelizer.ExportToOBJ(outputFile, leaves)
 	if errr != nil {
 		log.Fatalf("Failed to save voxels: %v", errr)
 	}
+
+	// print nodes detail
+	voxelizer.PrintDepthDetails()
+
+	fmt.Printf("--- File saved in %s ---\n\n", outputFile)
 }
