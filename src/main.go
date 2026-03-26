@@ -21,13 +21,6 @@ func main() {
 	fmt.Print(">> ")
 	fmt.Scanf("%s\n", &filename)
 
-	fmt.Println("\nEvery voxel is represented with the size of 2 to the power of 'i'")
-	fmt.Println("Please enter your desired 'i'")
-	fmt.Println("Hint : 'i' can be negative")
-	fmt.Println("Hint : 'i' should be adjusted to the file's need")
-	fmt.Print(">> ")
-	fmt.Scanf("%f\n", &targetSize)
-
 	targetSize = math.Pow(2, targetSize)
 
 	// Parse
@@ -42,7 +35,7 @@ func main() {
 
 	fmt.Println("\n=== STARTS VOXELIZING ===")
 
-	rootNode := voxelizer.StartVoxelize(arrPoints, arrFaces, targetSize)
+	rootNode := voxelizer.StartVoxelize(arrPoints, arrFaces)
 
 	fmt.Println("\n=== OUTPUT ===")
 	var leaves []*octree.OctreeNode
