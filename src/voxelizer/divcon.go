@@ -1,6 +1,8 @@
 package voxelizer
 
 import (
+	"fmt"
+	"math"
 	"tucil/src/octree"
 	"tucil/src/point"
 	"tucil/src/wrapper"
@@ -8,8 +10,18 @@ import (
 
 var DepthList = make(map[int]int)
 
-func StartVoxelize(points []point.Point, faces []point.Face, targetSize float64) *octree.OctreeNode {
+func StartVoxelize(points []point.Point, faces []point.Face) *octree.OctreeNode {
 	_, root := wrapper.WrapInBox(points)
+
+	exp := math.Log2(float64(root.HalfSide)*2)-8.0
+	targetSize := math.Pow(2, exp)
+	fmt.Println("\nEvery voxel is represented with the size of 2 to the power of 'i'")
+	fmt.Println("Please enter your desired 'i'")
+	fmt.Println("Hint : 'i' can be negative")
+	fmt.Printf("Hint : default 'i' is %v\n", int(exp))
+	fmt.Print(">> ")
+	fmt.Scanf("%f\n", &exp)
+
 	root.InFaces = faces
 	Divide(root, 0, targetSize)
 	return root
