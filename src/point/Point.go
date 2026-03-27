@@ -13,16 +13,15 @@ type Point struct {
 
 func ToPoint(vert [][3]float32) []Point {
 	arrP := make([]Point, len(vert))
-	for v := range vert {
-		arrP = append(arrP, Point{vert[v][0], vert[v][1], vert[v][2]})
-
+	for i, v := range vert {
+		arrP[i] = Point{v[0], v[1], v[2]}
 	}
 	return arrP
 }
 
 func PrintPoints(arrP []Point) {
 	for v := range arrP {
-		fmt.Printf("%d : %f %f %f\n", v, arrP[v].X, arrP[v].Y, arrP[v].Z)
+		fmt.Printf("%d : %.6f %.6f %.6f\n", v, arrP[v].X, arrP[v].Y, arrP[v].Z)
 	}
 }
 
