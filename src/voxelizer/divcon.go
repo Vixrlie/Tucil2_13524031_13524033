@@ -20,7 +20,7 @@ func ConcurrencyActivation(taskID int, wg *sync.WaitGroup, node *octree.OctreeNo
 }
 
 func StartVoxelize(points []point.Point, faces []point.Face) (*octree.OctreeNode, time.Time) {
-	_, root := wrapper.WrapInBox(points)
+	root := wrapper.WrapInBox(points)
 
 	exp := math.Log2(float64(root.HalfSide)*2) - 8.0
 	fmt.Println("\nEvery voxel is represented with the size of 2 to the power of 'i'")
