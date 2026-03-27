@@ -3,6 +3,7 @@ package voxelizer
 import (
 	"fmt"
 	"math"
+	"sync"
 	"time"
 	"tucil/src/octree"
 	"tucil/src/point"
@@ -10,18 +11,28 @@ import (
 )
 
 var DepthList = make(map[int]int)
+var depthMu sync.Mutex
+
+func ConcurrencyActivation(taskID int, wg *sync.WaitGroup, node *octree.OctreeNode, depth int, targetSize float64) {
+	defer wg.Done()
+	Divide(node, depth, targetSize)
+	fmt.Printf("Task %d done.\n", taskID)
+}
 
 func StartVoxelize(points []point.Point, faces []point.Face) (*octree.OctreeNode, time.Time) {
 	_, root := wrapper.WrapInBox(points)
 
 	exp := math.Log2(float64(root.HalfSide)*2) - 8.0
-	targetSize := math.Pow(2, exp)
+	// targetSize := math.Pow(2, exp)
 	fmt.Println("\nEvery voxel is represented with the size of 2 to the power of 'i'")
 	fmt.Println("Please enter your desired 'i'")
 	fmt.Println("Hint : 'i' can be negative")
 	fmt.Printf("Hint : default 'i' is %v\n", int(exp))
 	fmt.Print(">> ")
 	fmt.Scanf("%f\n", &exp)
+
+	targetSize := math.Pow(2, exp)
+
 	start_time := time.Now()
 
 	root.InFaces = faces
@@ -30,7 +41,9 @@ func StartVoxelize(points []point.Point, faces []point.Face) (*octree.OctreeNode
 }
 
 func Divide(node *octree.OctreeNode, depth int, targetSize float64) {
+	depthMu.Lock()
 	DepthList[depth]++
+	depthMu.Unlock()
 
 	if node.HalfSide <= float32(targetSize)/2 {
 		node.IsLeaf = true
@@ -74,9 +87,20 @@ func Divide(node *octree.OctreeNode, depth int, targetSize float64) {
 
 	node.InFaces = nil
 
-	for i := 0; i < 8; i++ {
-		if node.Children[i] != nil {
-			Divide(node.Children[i], depth+1, targetSize)
+	var wg sync.WaitGroup
+	if depth == 0 {
+		for i := 0; i < 8; i++ {
+			if node.Children[i] != nil {
+				wg.Add(1)
+				go ConcurrencyActivation(i, &wg, node.Children[i], depth+1, targetSize)
+			}
+		}
+		wg.Wait()
+	} else {
+		for i := 0; i < 8; i++ {
+			if node.Children[i] != nil {
+				Divide(node.Children[i], depth+1, targetSize)
+			}
 		}
 	}
 }
