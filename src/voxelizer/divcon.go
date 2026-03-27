@@ -23,7 +23,6 @@ func StartVoxelize(points []point.Point, faces []point.Face) (*octree.OctreeNode
 	_, root := wrapper.WrapInBox(points)
 
 	exp := math.Log2(float64(root.HalfSide)*2) - 8.0
-	// targetSize := math.Pow(2, exp)
 	fmt.Println("\nEvery voxel is represented with the size of 2 to the power of 'i'")
 	fmt.Println("Please enter your desired 'i'")
 	fmt.Println("Hint : 'i' can be negative")

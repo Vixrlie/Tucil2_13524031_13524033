@@ -2,7 +2,6 @@ package point
 
 import (
 	"fmt"
-	"os"
 )
 
 type Point struct {
@@ -22,11 +21,5 @@ func ToPoint(vert [][3]float32) []Point {
 func PrintPoints(arrP []Point) {
 	for v := range arrP {
 		fmt.Printf("%d : %.6f %.6f %.6f\n", v, arrP[v].X, arrP[v].Y, arrP[v].Z)
-	}
-}
-
-func FPrintPoints(F *os.File, arrP []Point) {
-	for v := range arrP {
-		fmt.Fprintf(F, "v %f %f %f\n", arrP[v].X, arrP[v].Y, arrP[v].Z)
 	}
 }
