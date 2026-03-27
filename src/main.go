@@ -2,76 +2,61 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"log"
+	"math"
+	"time"
 	"tucil/src/octree"
 	"tucil/src/parser"
 	"tucil/src/point"
-	"tucil/src/wrapper"
+	"tucil/src/voxelizer"
 )
 
 func main() {
-	output_file, err := os.Create("output.obj")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	var filename string
+	var targetSize float64
 
-	// Test Parsing
-	vertices, _ := parser.Parse("test/diamond.obj") //Diganti dengan path ke testcase nanti
+	// Input
+	fmt.Println("\n=== MAMBA VOXELIZER ===")
+	fmt.Println("Please enter the filename you desire")
+	fmt.Println("Hint : file located in tc/")
+	fmt.Print(">> ")
+	fmt.Scanf("%s\n", &filename)
+
+	targetSize = math.Pow(2, targetSize)
+
+	// Parse
+	vertices, faces := parser.Parse("tc/" + filename)
 
 	var arrPoints []point.Point
 	arrPoints = point.ToPoint(vertices)
 
-	var oct *octree.OctreeNode = nil
-	arrWrapper, oct := wrapper.WrapInBox(arrPoints)
-	if oct == nil {
-		fmt.Println("kosong")
-	} else {
-		fmt.Println(oct.S)
+	var arrFaces []point.Face
+	arrFaces = point.ToFace(arrPoints, faces)
+
+	fmt.Println("\n=== STARTS VOXELIZING ===")
+
+	rootNode, start_time := voxelizer.StartVoxelize(arrPoints, arrFaces)
+
+	fmt.Println("\n=== OUTPUT ===")
+	var leaves []*octree.OctreeNode
+	voxelizer.GetLeaves(rootNode, &leaves)
+
+	fmt.Println("--- Voxels Generated ---")
+	fmt.Printf("vx : %v\n\n", len(leaves))
+
+	elapsed := time.Since(start_time)
+	log.Printf("The process took %s", elapsed)
+
+	// print vertex & face
+	outputFile := "test/v_" + filename
+	errr := voxelizer.ExportToOBJ(outputFile, leaves)
+	if errr != nil {
+		log.Fatalf("Failed to save voxels: %v", errr)
 	}
 
-	point.PrintPoints(arrWrapper)
-	point.FPrintPoints(output_file, arrWrapper)
+	// print nodes detail
+	voxelizer.PrintDepthDetails()
 
-	// fmt.Fprintf(output_file, "\n\nf 1 2 3\nf 2 3 4\nf 4 3 7\nf 4 7 8\nf 7 8 6\nf 7 6 5\nf 5 1 2\nf 5 2 6\nf 1 3 5\nf 3 5 7\nf 2 4 6\nf 4 6 8\n")
-
-	fmt.Fprintf(output_file, "\n\nf 1 3 7 5\nf 2 4 8 6\nf 1 2 4 3\nf 5 6 8 7\nf 1 2 6 5\nf 3 4 8 7\n")
-
-	// fmt.Println("==== VERTICES ====")
-	// fmt.Fprintln(output_file, "# ==== VERTICES ====")
-	// for i, row := range vertices {
-	// 	fmt.Print(i, " : ")
-	// 	fmt.Fprintf(output_file, "v ")
-	// 	for j, col := range row {
-	// 		fmt.Printf("%.6f", col)
-	// 		fmt.Fprintf(output_file, "%.6f", col)
-	// 		if j != 2 {
-	// 			fmt.Print(" ")
-	// 			fmt.Fprint(output_file, " ")
-	// 		}
-	// 	}
-	// 	fmt.Println()
-	// 	fmt.Fprintln(output_file)
-	// }
-
-	// fmt.Println("\n==== FACES ====")
-	// fmt.Fprintln(output_file, "\n\n# ==== FACES ====")
-
-	// for i, row := range faces {
-	// 	fmt.Print(i, " : ")
-	// 	fmt.Fprintf(output_file, "f ")
-	// 	for j, col := range row {
-	// 		fmt.Printf("%d", col)
-	// 		fmt.Fprintf(output_file, "%d", col)
-	// 		if j != 2 {
-	// 			fmt.Print(" ")
-	// 			fmt.Fprint(output_file, " ")
-	// 		}
-	// 	}
-	// 	fmt.Println()
-	// 	fmt.Fprintln(output_file)
-	// }
-
-	defer output_file.Close()
+	fmt.Printf("--- File saved in %s ---\n\n", outputFile)
 
 }

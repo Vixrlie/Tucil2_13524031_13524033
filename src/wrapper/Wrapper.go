@@ -6,7 +6,7 @@ import (
 	"tucil/src/point"
 )
 
-func WrapInBox(arrPoint []point.Point) (res []point.Point, oct *octree.OctreeNode) {
+func WrapInBox(arrPoint []point.Point) (oct *octree.OctreeNode) {
 	oct = nil
 	var max_x, max_y, max_z float32 = -math.MaxFloat32, -math.MaxFloat32, -math.MaxFloat32
 
@@ -40,39 +40,36 @@ func WrapInBox(arrPoint []point.Point) (res []point.Point, oct *octree.OctreeNod
 		}
 	}
 
-	var sx, sy, sz, sd, cx, cy, cz float32 //s: panjang, c: tengah, sd: panjang maks
-	sx = max_x - min_x
-	cx = (max_x + min_x) / 2
-	sy = max_y - min_y
-	cy = (max_y + min_y) / 2
-	sz = max_z - min_z
-	cz = (max_z + min_z) / 2
+	var sd, cx, cy, cz float32 //s: panjang, c: tengah, sd: stengah panjang maks
+	// ceil biar ga gmpg error
+	cx = float32(math.Ceil(float64((max_x + min_x) / 2)))
+	cy = float32(math.Ceil(float64((max_y + min_y) / 2)))
+	cz = float32(math.Ceil(float64((max_z + min_z) / 2)))
 
-	sd = sx
-	if sy > sd {
-		sd = sy
+	var maxDist float32 = 0
+	for i := range arrPoint {
+		dx := float32(math.Abs(float64(arrPoint[i].X - cx)))
+		dy := float32(math.Abs(float64(arrPoint[i].Y - cy)))
+		dz := float32(math.Abs(float64(arrPoint[i].Z - cz)))
+
+		if dx > maxDist {
+			maxDist = dx
+		}
+		if dy > maxDist {
+			maxDist = dy
+		}
+		if dz > maxDist {
+			maxDist = dz
+		}
 	}
-	if sz > sd {
-		sd = sz
+	sd = maxDist
+
+	// biar kelipatan dua aj
+	var exp float64 = 0
+	for float32(math.Pow(2, exp)) < sd {
+		exp++
 	}
+	sd = float32(math.Pow(2, exp))
 
-	min_x = cx - sd/2
-	max_x = cx + sd/2
-	min_y = cy - sd/2
-	max_y = cy + sd/2
-	min_z = cz - sd/2
-	max_z = cz + sd/2
-
-	res = []point.Point{}
-
-	res = append(res, point.Point{min_x, min_y, min_z},
-		point.Point{min_x, min_y, max_z},
-		point.Point{min_x, max_y, min_z},
-		point.Point{min_x, max_y, max_z},
-		point.Point{max_x, min_y, min_z},
-		point.Point{max_x, min_y, max_z},
-		point.Point{max_x, max_y, min_z},
-		point.Point{max_x, max_y, max_z})
-
-	return res, octree.NewOctreeNode(point.Point{cx, cy, cz}, sd)
+	return octree.NewOctreeNode(point.Point{X: cx, Y: cy, Z: cz}, sd)
 }
