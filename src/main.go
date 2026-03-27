@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"time"
 	"tucil/src/octree"
 	"tucil/src/parser"
 	"tucil/src/point"
@@ -36,6 +37,8 @@ func main() {
 
 	rootNode := voxelizer.StartVoxelize(arrPoints, arrFaces)
 
+	start_time := time.Now()
+
 	fmt.Println("\n=== OUTPUT ===")
 	var leaves []*octree.OctreeNode
 	voxelizer.GetLeaves(rootNode, &leaves)
@@ -54,4 +57,6 @@ func main() {
 	voxelizer.PrintDepthDetails()
 
 	fmt.Printf("--- File saved in %s ---\n\n", outputFile)
+	elapsed := time.Since(start_time)
+	log.Printf("The process took %s", elapsed)
 }
