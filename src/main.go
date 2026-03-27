@@ -32,7 +32,6 @@ func main() {
 	var arrFaces []point.Face
 	arrFaces = point.ToFace(arrPoints, faces)
 
-
 	fmt.Println("\n=== STARTS VOXELIZING ===")
 
 	rootNode := voxelizer.StartVoxelize(arrPoints, arrFaces)

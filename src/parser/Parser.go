@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
 func HandleFile(path string) (res *os.File) {
 	file, err := os.Open(path)
-    if err != nil {
+	if err != nil {
 		log.Fatal(err)
 	}
 	return file
@@ -28,9 +29,16 @@ func Parse(path string) (res1 [][3]float32, res2 [][3]int) {
 			temp := [3]float32{a, b, c}
 			res1 = append(res1, temp)
 		} else if strings.HasPrefix(line, "f ") {
-			var a, b, c int
-			fmt.Sscanf(line, "f %d %d %d", &a, &b, &c)
-			temp := [3]int{a, b, c}
+			token := strings.Fields(line)
+			var temp [3]int
+			for i := 0; i < 3; i++ {
+				// Ambil bagian sebelum slash pertama
+				a := strings.Split(token[i+1], "/")[0]
+				val, err := strconv.Atoi(a)
+				if err == nil {
+					temp[i] = val
+				}
+			}
 			res2 = append(res2, temp)
 		}
 	}
