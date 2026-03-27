@@ -35,9 +35,7 @@ func main() {
 
 	fmt.Println("\n=== STARTS VOXELIZING ===")
 
-	rootNode := voxelizer.StartVoxelize(arrPoints, arrFaces)
-
-	start_time := time.Now()
+	rootNode, start_time := voxelizer.StartVoxelize(arrPoints, arrFaces)
 
 	fmt.Println("\n=== OUTPUT ===")
 	var leaves []*octree.OctreeNode
@@ -45,6 +43,9 @@ func main() {
 
 	fmt.Println("--- Voxels Generated ---")
 	fmt.Printf("vx : %v\n\n", len(leaves))
+
+	elapsed := time.Since(start_time)
+	log.Printf("The process took %s", elapsed)
 
 	// print vertex & face
 	outputFile := "test/v_" + filename
@@ -57,6 +58,5 @@ func main() {
 	voxelizer.PrintDepthDetails()
 
 	fmt.Printf("--- File saved in %s ---\n\n", outputFile)
-	elapsed := time.Since(start_time)
-	log.Printf("The process took %s", elapsed)
+
 }
